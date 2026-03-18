@@ -1,8 +1,9 @@
 "use client";
 
 import { useSubscriptionStore } from "@/store/subscriptionStore";
-import { formatKRW, getDaysUntilBilling, toMonthlyAmount, getCategoryLabel } from "@/lib/utils";
+import { formatKRW, getDaysUntilBilling, getCategoryLabel } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export function UpcomingPayments() {
   const { subscriptions } = useSubscriptionStore();
@@ -15,46 +16,56 @@ export function UpcomingPayments() {
 
   if (upcoming.length === 0) {
     return (
-      <div className="bg-card border border-border rounded-xl p-6 text-center">
+      <div className="bg-card border border-border rounded-2xl p-6 text-center">
         <p className="text-sm text-muted-foreground">14일 내 예정된 결제가 없어요</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-border">
-        <h2 className="text-sm font-semibold">결제 예정</h2>
+    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3.5 border-b border-border">
+        <h2 className="font-serif text-base font-semibold">결제 예정</h2>
+        <Link href="/subscriptions" className="text-xs text-primary font-medium">전체 →</Link>
       </div>
       <div className="divide-y divide-border">
         {upcoming.map((sub) => (
-          <div key={sub.id} className="flex items-center gap-3 px-4 py-3">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
-              style={{ backgroundColor: sub.color }}
-            >
-              {sub.name[0]}
+          <Link key={sub.id} href={`/subscriptions/${sub.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-colors">
+            {/* 날짜 */}
+            <div className="w-8 text-center shrink-0">
+              <p className={cn(
+                "font-mono text-lg font-semibold leading-none",
+                sub.daysLeft === 0 ? "text-primary" : "text-foreground"
+              )}>
+                {new Date(sub.nextBillingDate).getDate()}
+              </p>
+              <p className="text-[9px] text-muted-foreground mt-0.5 uppercase">
+                {["일","월","화","수","목","금","토"][new Date(sub.nextBillingDate).getDay()]}
+              </p>
             </div>
+
+            {/* 색상 점 */}
+            <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: sub.color }} />
+
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{sub.name}</p>
               <p className="text-xs text-muted-foreground">{getCategoryLabel(sub.category)}</p>
             </div>
+
             <div className="text-right shrink-0">
-              <p className="text-sm font-semibold">{formatKRW(sub.amount)}</p>
-              <p
-                className={cn(
-                  "text-xs font-medium",
-                  sub.daysLeft === 0
-                    ? "text-red-400"
-                    : sub.daysLeft <= 3
-                    ? "text-yellow-400"
-                    : "text-muted-foreground"
-                )}
-              >
-                {sub.daysLeft === 0 ? "오늘" : `${sub.daysLeft}일 후`}
+              <p className="font-mono text-sm font-medium">{formatKRW(sub.amount)}</p>
+              <p className={cn(
+                "text-[10px] font-semibold mt-0.5 px-1.5 py-0.5 rounded-full inline-block",
+                sub.daysLeft === 0
+                  ? "bg-primary text-primary-foreground"
+                  : sub.daysLeft <= 3
+                  ? "bg-warning-soft text-warning"
+                  : "bg-success-soft text-success"
+              )}>
+                {sub.daysLeft === 0 ? "오늘" : `D-${sub.daysLeft}`}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

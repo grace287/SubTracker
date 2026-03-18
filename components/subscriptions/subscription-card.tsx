@@ -25,18 +25,18 @@ export function SubscriptionCard({ sub }: Props) {
   const monthly = toMonthlyAmount(sub.amount, sub.billingCycle);
 
   return (
-    <Link href={`/subscriptions/${sub.id}`} className="block">
+    <Link href={`/subscriptions/${sub.id}`} className="block group">
       <div
         className={cn(
-          "bg-card border border-border rounded-xl p-4 hover:border-primary/40 transition-all hover:shadow-lg hover:shadow-primary/5",
+          "bg-card border border-border rounded-2xl p-4",
+          "hover:border-primary/30 hover:shadow-md transition-all duration-200",
           !sub.isActive && "opacity-50"
         )}
       >
-        <div className="flex items-start justify-between gap-3">
-          {/* Icon + Name */}
+        <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-3 min-w-0">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold shrink-0 text-sm"
+              className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold shrink-0 text-sm"
               style={{ backgroundColor: sub.color }}
             >
               {sub.name[0]}
@@ -47,10 +47,9 @@ export function SubscriptionCard({ sub }: Props) {
             </div>
           </div>
 
-          {/* Value Grade */}
           <div
             className={cn(
-              "shrink-0 px-2 py-1 rounded-lg border text-xs font-bold",
+              "shrink-0 w-7 h-7 rounded-lg border text-xs font-bold flex items-center justify-center",
               gradeBg(score.grade),
               gradeColor(score.grade)
             )}
@@ -59,39 +58,40 @@ export function SubscriptionCard({ sub }: Props) {
           </div>
         </div>
 
-        {/* Amount */}
-        <div className="mt-3 flex items-end justify-between">
+        {/* 금액 + 결제일 */}
+        <div className="flex items-end justify-between">
           <div>
-            <span className="text-xl font-bold">{formatKRW(sub.amount)}</span>
+            <span className="font-mono text-xl font-semibold">{formatKRW(sub.amount)}</span>
             <span className="text-xs text-muted-foreground ml-1">/ {CYCLE_LABEL[sub.billingCycle]}</span>
             {sub.billingCycle !== "monthly" && (
               <p className="text-xs text-muted-foreground">월 {formatKRW(monthly)}</p>
             )}
           </div>
 
-          {/* Billing countdown */}
           <div
             className={cn(
-              "flex items-center gap-1 text-xs px-2 py-1 rounded-lg",
-              daysLeft <= 3
-                ? "bg-red-500/10 text-red-400"
+              "flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-lg",
+              daysLeft === 0
+                ? "bg-primary text-primary-foreground"
+                : daysLeft <= 3
+                ? "bg-warning-soft text-warning"
                 : daysLeft <= 7
-                ? "bg-yellow-500/10 text-yellow-400"
-                : "bg-muted/50 text-muted-foreground"
+                ? "bg-warning-soft/60 text-warning"
+                : "bg-muted text-muted-foreground"
             )}
           >
             <Calendar className="w-3 h-3" />
-            {daysLeft === 0 ? "오늘 결제" : `${daysLeft}일 후`}
+            {daysLeft === 0 ? "오늘" : `D-${daysLeft}`}
           </div>
         </div>
 
-        {/* Footer */}
+        {/* 푸터 */}
         <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
-            {getUsageDuration(sub.startDate)} 사용 중
+            {getUsageDuration(sub.startDate)} 구독 중
           </div>
-          <div>월 {sub.usageFrequency}회 사용</div>
+          <div className="font-mono">월 {sub.usageFrequency}회</div>
         </div>
       </div>
     </Link>

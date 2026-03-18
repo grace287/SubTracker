@@ -2,13 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Google Fonts ─────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
 @layer base {
+  /* ── Light Theme (목업 기반 warm paper 팔레트) ─────── */
   :root {
+    --background: 42 38% 97%;        /* #FAF8F3 cream */
+    --foreground: 30 10% 10%;        /* #1A1814 ink */
+    --card: 40 100% 99%;             /* #FFFEF9 warm white */
+    --card-foreground: 30 10% 10%;
+    --primary: 14 64% 47%;           /* #C94B2A terracotta */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 38 23% 92%;         /* #F4F1EA paper */
+    --secondary-foreground: 30 10% 10%;
+    --muted: 38 23% 92%;
+    --muted-foreground: 30 5% 42%;   /* #6B6760 ink-60 */
+    --accent: 37 14% 89%;            /* #E8E5DF */
+    --accent-foreground: 30 10% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 37 14% 89%;            /* #E8E5DF */
+    --input: 38 23% 92%;
+    --ring: 14 64% 47%;
+    --radius: 0.875rem;
+
+    /* Semantic extras */
+    --success: 150 49% 32%;          /* #2A7A4B green */
+    --success-soft: 145 45% 94%;     /* #E8F5EE */
+    --warning: 43 80% 38%;           /* #B8860B gold */
+    --warning-soft: 47 90% 96%;      /* #FDF8E8 */
+    --info: 219 68% 32%;             /* #1A4A8A blue */
+    --info-soft: 218 45% 93%;        /* #E8EEF8 */
+    --ink-dark: 30 10% 10%;
+  }
+
+  /* ── Dark Theme ─────────────────────────────────────── */
+  .dark {
     --background: 224 71% 4%;
     --foreground: 213 31% 91%;
     --card: 224 71% 6%;
     --card-foreground: 213 31% 91%;
-    --primary: 262 83% 67%;
+    --primary: 14 64% 55%;           /* brighter terracotta for dark */
     --primary-foreground: 0 0% 100%;
     --secondary: 222 47% 12%;
     --secondary-foreground: 213 31% 91%;
@@ -20,44 +55,85 @@
     --destructive-foreground: 0 0% 100%;
     --border: 216 34% 17%;
     --input: 216 34% 17%;
-    --ring: 262 83% 67%;
-    --radius: 0.75rem;
+    --ring: 14 64% 55%;
+    --radius: 0.875rem;
+
+    --success: 142 70% 42%;
+    --success-soft: 142 25% 15%;
+    --warning: 38 80% 50%;
+    --warning-soft: 38 30% 12%;
+    --info: 219 70% 55%;
+    --info-soft: 219 25% 15%;
+    --ink-dark: 213 31% 91%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Noto Sans KR', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  /* Serif headings */
+  .font-serif {
+    font-family: 'DM Serif Display', Georgia, serif;
+  }
+  /* Mono numbers */
+  .font-mono {
+    font-family: 'DM Mono', 'Fira Code', monospace;
   }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-border rounded-full;
+/* ── Input base ──────────────────────────────────────── */
+@layer components {
+  .input {
+    @apply w-full bg-secondary border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary transition-colors;
+  }
+
+  /* 편집 타이포 */
+  .heading-serif {
+    font-family: 'DM Serif Display', serif;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  /* 숫자 */
+  .num-mono {
+    font-family: 'DM Mono', monospace;
+    font-feature-settings: "tnum";
+  }
+
+  /* 카드 그림자 */
+  .card-shadow {
+    box-shadow: 0 2px 12px hsl(var(--foreground) / 0.06);
+  }
+  .card-shadow-lg {
+    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.10);
+  }
 }
 
-/* Input base style */
-.input {
-  @apply w-full bg-secondary border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary transition-colors;
-}
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { scrollbar-width: none; }
 
-/* Smooth scroll */
+/* ── Misc ────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+* { -webkit-tap-highlight-color: transparent; }
+
+/* ── 테마 전환 애니메이션 ─────────────────────────────── */
 html {
-  scroll-behavior: smooth;
+  transition: color-scheme 0.2s;
 }
-
-/* Mobile tap highlight */
-* {
-  -webkit-tap-highlight-color: transparent;
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+/* 애니메이션 전환 제외 항목 */
+svg, img, video, canvas {
+  transition: none !important;
 }
